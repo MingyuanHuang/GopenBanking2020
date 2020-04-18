@@ -1,0 +1,26 @@
+OrdererOrgs:
+        - Name: Orderer
+          Doamain: anzjointlab.com
+          Specs:
+                  - Hostname: orderer
+
+PeerOrgs:
+        - Name: bc_org1
+          Domain: org1.anzjointlab.com
+          Template:
+                  Count: 3
+                  Users:
+                          Count: 4
+        - Name: bc_org2
+          Domain: org2.anzjointlab.com
+          Template:
+                  Count: 3
+                  Users:
+                          Count: 4
+        - Name: bc_org3
+          Domain: org3.anzjointlab.com
+          Template:
+                  Count: 3
+                  Users:
+                          Count: 4
+
