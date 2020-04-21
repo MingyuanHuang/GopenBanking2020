@@ -42,9 +42,6 @@ Orderer: &OrdererDefaults
                 MaxMessageCount: 10
                 AbsoluteMaxBytes: 99 MB
                 PreferredMaxBytes: 512 KB
-        Kafka:
-                Brokers:
-                        - 127.0.0:9092
         Organizations:
 
 

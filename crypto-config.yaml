@@ -3,7 +3,7 @@ OrdererOrgs:
           Doamain: anzjointlab.com
           Specs:
                   - Hostname: orderer
-
+                    CommonName: orderer.anzjointlab.com
 PeerOrgs:
         - Name: bc_org1
           Domain: org1.anzjointlab.com
