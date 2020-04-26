@@ -3,9 +3,9 @@ docker-compose -f docker-compose-cli.yaml down
 
 rm -rf crypto-config
 
+rm -rf channel-artifacts
 
-
-
+mkdir channel-artifacts
 
 
 cryptogen generate --config=./crypto-config.yaml
