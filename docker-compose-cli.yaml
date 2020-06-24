@@ -38,17 +38,17 @@
             - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
             # enabled TLS
             - ORDERER_GENERAL_TLS_ENABLED=true
-            - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
-            - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
-            - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+            - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/keystore/2b993d5f1ccda05f110d4a30331549885a26a16846c98f6211dcdc17883d7246_sk
+            - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/signcerts/cert.pem
+            - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/tlscacerts/tls-localhost-8056.pem]
           working_dir: /opt/gopath/src/github.com/hyperledger/fabric
           command: orderer
           volumes:
             - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
               #- ./crypto-config/ordererOrganizations/anzjointlab.com/orderers/orderer.anzjointlab.com/msp:/var/hyperledger/orderer/msp
               #- ./crypto-config/ordererOrganizations/anzjointlab.com/orderers/orderer.anzjointlab.com/tls/:/var/hyperledger/orderer/tls
-            - ./crypto-config/ordererOrganizations/orderers/orderer.anzjointlab.com/msp:/var/hyperledger/orderer/msp
-            - ./crypto-config/ordererOrganizations/orderers/orderer.anzjointlab.com/tls/:/var/hyperledger/orderer/tls
+            - ./ca-files/ordererOrganizations/orderers/orderer.anzjointlab.com/msp:/var/hyperledger/orderer/msp
+            - ./ca-files/ordererOrganizations/orderers/orderer.anzjointlab.com/tls/:/var/hyperledger/orderer/tls
             - orderer.anzjointlab.com:/var/hyperledger/production/orderer
           ports:
             - 17050:7050
@@ -61,6 +61,7 @@
           stdin_open: true
           tty: true
           environment:
+              - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
               - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
               # the following setting starts chaincode containers on the same
               # bridge network as the peers
@@ -72,9 +73,9 @@
               - CORE_PEER_GOSSIP_USELEADERELECTION=true
               - CORE_PEER_GOSSIP_ORGLEADER=false
               - CORE_PEER_PROFILE_ENABLED=true
-              #- CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
-              #- CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
-              #- CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+              - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/signcerts/cert.pem
+              - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/keystore/66b346e2aaa4f70e3310e8f3e71f1b4cc192b4145b5881b5b5f09848f0613e3e_sk
+              - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/tlscacerts/tls-localhost-8056.pem
               - CORE_PEER_ID=peer0.org1.anzjointlab.com
               - CORE_PEER_ADDRESS=peer0.org1.anzjointlab.com:7051
               - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.org1.anzjointlab.com:7051
@@ -84,8 +85,8 @@
           command: peer node start
           volumes:
               - /var/run/:/host/var/run/
-              - ./crypto-config/peerOrganizations/org1.anzjointlab.com/peers/peer0.org1.anzjointlab.com/msp:/etc/hyperledger/fabric/msp
-              - ./crypto-config/peerOrganizations/org1.anzjointlab.com/peers/peer0.org1.anzjointlab.com/tls:/etc/hyperledger/fabric/tls
+              - ./ca-files/peerOrganizations/org1.anzjointlab.com/peers/peer0.org1.anzjointlab.com/msp:/etc/hyperledger/fabric/msp
+              - ./ca-files/peerOrganizations/org1.anzjointlab.com/peers/peer0.org1.anzjointlab.com/tls:/etc/hyperledger/fabric/tls
               - peer0.org1.anzjointlab.com:/var/hyperledger/production
           ports:
               - 7051:7051
@@ -99,6 +100,7 @@
           stdin_open: true
           tty: true
           environment:
+              - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
               - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
               # the following setting starts chaincode containers on the same
               # bridge network as the peers
@@ -110,9 +112,9 @@
               - CORE_PEER_GOSSIP_USELEADERELECTION=true
               - CORE_PEER_GOSSIP_ORGLEADER=false
               - CORE_PEER_PROFILE_ENABLED=true
-              #- CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
-              #- CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
-              #- CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+              - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/signcerts/cert.pem
+              - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/keystore/379b2dbfc9b10cc4cc250c21748daea36f1e2a780e734e55cd39bb1469867aaa_sk
+              - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/tlscacerts/tls-localhost-8056.pem
               - CORE_PEER_ID=peer1.org1.anzjointlab.com
               - CORE_PEER_ADDRESS=peer1.org1.anzjointlab.com:7051
               - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org1.anzjointlab.com:7051
@@ -122,8 +124,8 @@
           command: peer node start
           volumes:
               - /var/run/:/host/var/run/
-              - ./crypto-config/peerOrganizations/org1.anzjointlab.com/peers/peer1.org1.anzjointlab.com/msp:/etc/hyperledger/fabric/msp
-              - ./crypto-config/peerOrganizations/org1.anzjointlab.com/peers/peer1.org1.anzjointlab.com/tls:/etc/hyperledger/fabric/tls
+              - ./ca-files/peerOrganizations/org1.anzjointlab.com/peers/peer1.org1.anzjointlab.com/msp:/etc/hyperledger/fabric/msp
+              - ./ca-files/peerOrganizations/org1.anzjointlab.com/peers/peer1.org1.anzjointlab.com/tls:/etc/hyperledger/fabric/tls
               - peer1.org1.anzjointlab.com:/var/hyperledger/production
           ports:
               - 8051:7051
@@ -137,6 +139,7 @@
           stdin_open: true
           tty: true
           environment:
+              - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
               - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
               # the following setting starts chaincode containers on the same
               # bridge network as the peers
@@ -148,9 +151,9 @@
               - CORE_PEER_GOSSIP_USELEADERELECTION=true
               - CORE_PEER_GOSSIP_ORGLEADER=false
               - CORE_PEER_PROFILE_ENABLED=true
-              #- CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
-              #- CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
-              #- CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+              - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/signcerts/cert.pem
+              - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/keystore/9934ee61b38e88fb2f073432a935dbda905795b4c8a3d4b43e0f850edddd4ff2_sk
+              - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/tlscacerts/tls-localhost-8056.pem
               - CORE_PEER_ID=peer2.org1.anzjointlab.com
               - CORE_PEER_ADDRESS=peer2.org1.anzjointlab.com:7051
               - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer2.org1.anzjointlab.com:7051
@@ -160,9 +163,9 @@
           command: peer node start
           volumes:
               - /var/run/:/host/var/run/
-              - ./crypto-config/peerOrganizations/org1.anzjointlab.com/peers/peer2.org1.anzjointlab.com/msp:/etc/hyperledger/fabric/msp
-              - ./crypto-config/peerOrganizations/org1.anzjointlab.com/peers/peer2.org1.anzjointlab.com/tls:/etc/hyperledger/fabric/tls
-              - peer1.org1.anzjointlab.com:/var/hyperledger/production
+              - ./ca-files/peerOrganizations/org1.anzjointlab.com/peers/peer2.org1.anzjointlab.com/msp:/etc/hyperledger/fabric/msp
+              - ./ca-files/peerOrganizations/org1.anzjointlab.com/peers/peer2.org1.anzjointlab.com/tls:/etc/hyperledger/fabric/tls
+              - peer2.org1.anzjointlab.com:/var/hyperledger/production
           ports:
               - 17051:7051
               - 17053:7053
@@ -186,9 +189,9 @@
               - CORE_PEER_GOSSIP_USELEADERELECTION=true
               - CORE_PEER_GOSSIP_ORGLEADER=false
               - CORE_PEER_PROFILE_ENABLED=true
-              - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
-              - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
-              - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+              - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/signcerts/cert.pem
+              - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/keystore/2e7f5c188e361cc93c6c835e48011509ef283e8de93c6f385e038b15b7e56da4_sk
+              - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/tlscacerts/tls-localhost-8056.pem
               - CORE_PEER_ID=peer0.org2.anzjointlab.com
               - CORE_PEER_ADDRESS=peer0.org2.anzjointlab.com:7051
               - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org2.anzjointlab.com:7051
@@ -198,8 +201,8 @@
           command: peer node start
           volumes:
               - /var/run/:/host/var/run/
-              - ./crypto-config/peerOrganizations/org2.anzjointlab.com/peers/peer0.org2.anzjointlab.com/msp:/etc/hyperledger/fabric/msp
-              - ./crypto-config/peerOrganizations/org2.anzjointlab.com/peers/peer0.org2.anzjointlab.com/tls:/etc/hyperledger/fabric/tls
+              - ./ca-files/peerOrganizations/org2.anzjointlab.com/peers/peer0.org2.anzjointlab.com/msp:/etc/hyperledger/fabric/msp
+              - ./ca-files/peerOrganizations/org2.anzjointlab.com/peers/peer0.org2.anzjointlab.com/tls:/etc/hyperledger/fabric/tls
               - peer0.org2.anzjointlab.com:/var/hyperledger/production
           ports:
               - 9051:7051
@@ -224,9 +227,9 @@
               - CORE_PEER_GOSSIP_USELEADERELECTION=true
               - CORE_PEER_GOSSIP_ORGLEADER=false
               - CORE_PEER_PROFILE_ENABLED=true
-              - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
-              - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
-              - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+              - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/signcerts/cert.pem
+              - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/keystore/8c42ada2c6932f2eec6fe06500477d130aea530c34f27b773b834c3f77319975_sk
+              - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/tlscacerts/tls-localhost-8056.pem
               - CORE_PEER_ID=peer1.org2.anzjointlab.com
               - CORE_PEER_ADDRESS=peer1.org2.anzjointlab.com:7051
               - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org2.anzjointlab.com:7051
@@ -236,8 +239,8 @@
           command: peer node start
           volumes:
               - /var/run/:/host/var/run/
-              - ./crypto-config/peerOrganizations/org2.anzjointlab.com/peers/peer1.org2.anzjointlab.com/msp:/etc/hyperledger/fabric/msp
-              - ./crypto-config/peerOrganizations/org2.anzjointlab.com/peers/peer1.org2.anzjointlab.com/tls:/etc/hyperledger/fabric/tls
+              - ./ca-files/peerOrganizations/org2.anzjointlab.com/peers/peer1.org2.anzjointlab.com/msp:/etc/hyperledger/fabric/msp
+              - ./ca-files/peerOrganizations/org2.anzjointlab.com/peers/peer1.org2.anzjointlab.com/tls:/etc/hyperledger/fabric/tls
               - peer1.org2.anzjointlab.com:/var/hyperledger/production
           ports:
               - 10051:7051
@@ -262,9 +265,9 @@
               - CORE_PEER_GOSSIP_USELEADERELECTION=true
               - CORE_PEER_GOSSIP_ORGLEADER=false
               - CORE_PEER_PROFILE_ENABLED=true
-              - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
-              - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
-              - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+              - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/signcerts/cert.pem
+              - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/keystore/168a2559b0a40fea7c5e351fce9f9eb3e639eb262f7aeef7f08deaaeb1fab29a_sk
+              - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/tlscacerts/tls-localhost-8056.pem
               - CORE_PEER_ID=peer2.org2.anzjointlab.com
               - CORE_PEER_ADDRESS=peer2.org2.anzjointlab.com:7051
               - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer2.org2.anzjointlab.com:7051
@@ -274,9 +277,9 @@
           command: peer node start
           volumes:
               - /var/run/:/host/var/run/
-              - ./crypto-config/peerOrganizations/org2.anzjointlab.com/peers/peer2.org2.anzjointlab.com/msp:/etc/hyperledger/fabric/msp
-              - ./crypto-config/peerOrganizations/org2.anzjointlab.com/peers/peer2.org2.anzjointlab.com/tls:/etc/hyperledger/fabric/tls
-              - peer1.org2.anzjointlab.com:/var/hyperledger/production
+              - ./ca-files/peerOrganizations/org2.anzjointlab.com/peers/peer2.org2.anzjointlab.com/msp:/etc/hyperledger/fabric/msp
+              - ./ca-files/peerOrganizations/org2.anzjointlab.com/peers/peer2.org2.anzjointlab.com/tls:/etc/hyperledger/fabric/tls
+              - peer2.org2.anzjointlab.com:/var/hyperledger/production
           ports:
               - 27051:7051
               - 27053:7053
@@ -300,9 +303,9 @@
               - CORE_PEER_GOSSIP_USELEADERELECTION=true
               - CORE_PEER_GOSSIP_ORGLEADER=false
               - CORE_PEER_PROFILE_ENABLED=true
-              - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
-              - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
-              - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+              - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/signcerts/cert.pem
+              - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/keystore/6d3d82882c196902229364b6afa3d64cbefbf371cf5353464a18e0c711540116_sk
+              - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/tlscacerts/tls-localhost-8056.pem
               - CORE_PEER_ID=peer0.org3.anzjointlab.com
               - CORE_PEER_ADDRESS=peer0.org3.anzjointlab.com:7051
               - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org3.anzjointlab.com:7051
@@ -312,8 +315,8 @@
           command: peer node start
           volumes:
               - /var/run/:/host/var/run/
-              - ./crypto-config/peerOrganizations/org3.anzjointlab.com/peers/peer0.org3.anzjointlab.com/msp:/etc/hyperledger/fabric/msp
-              - ./crypto-config/peerOrganizations/org3.anzjointlab.com/peers/peer0.org3.anzjointlab.com/tls:/etc/hyperledger/fabric/tls
+              - ./ca-files/peerOrganizations/org3.anzjointlab.com/peers/peer0.org3.anzjointlab.com/msp:/etc/hyperledger/fabric/msp
+              - ./ca-files/peerOrganizations/org3.anzjointlab.com/peers/peer0.org3.anzjointlab.com/tls:/etc/hyperledger/fabric/tls
               - peer0.org3.anzjointlab.com:/var/hyperledger/production
           ports:
               - 37051:7051
@@ -338,9 +341,9 @@
               - CORE_PEER_GOSSIP_USELEADERELECTION=true
               - CORE_PEER_GOSSIP_ORGLEADER=false
               - CORE_PEER_PROFILE_ENABLED=true
-              - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
-              - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
-              - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+              - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/signcerts/cert.pem
+              - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/keystore/0387d7cc5420adcc23f6165c59f68d27f76fd8c4a1bd0c44c0b28bdea549b3ef_sk
+              - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/tlscacerts/tls-localhost-8056.pem
               - CORE_PEER_ID=peer1.org3.anzjointlab.com
               - CORE_PEER_ADDRESS=peer1.org3.anzjointlab.com:7051
               - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org3.anzjointlab.com:7051
@@ -350,8 +353,8 @@
           command: peer node start
           volumes:
               - /var/run/:/host/var/run/
-              - ./crypto-config/peerOrganizations/org3.anzjointlab.com/peers/peer1.org3.anzjointlab.com/msp:/etc/hyperledger/fabric/msp
-              - ./crypto-config/peerOrganizations/org3.anzjointlab.com/peers/peer1.org3.anzjointlab.com/tls:/etc/hyperledger/fabric/tls
+              - ./ca-files/peerOrganizations/org3.anzjointlab.com/peers/peer1.org3.anzjointlab.com/msp:/etc/hyperledger/fabric/msp
+              - ./ca-files/peerOrganizations/org3.anzjointlab.com/peers/peer1.org3.anzjointlab.com/tls:/etc/hyperledger/fabric/tls
               - peer1.org3.anzjointlab.com:/var/hyperledger/production
           ports:
               - 47051:7051
@@ -376,9 +379,9 @@
               - CORE_PEER_GOSSIP_USELEADERELECTION=true
               - CORE_PEER_GOSSIP_ORGLEADER=false
               - CORE_PEER_PROFILE_ENABLED=true
-              - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
-              - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
-              - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+              - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/signcerts/cert.pem
+              - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/keystore/426d4ddca59a05aa5e78de1124a91ef56dd1094822be97db55341322d03eb0be_sk
+              - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/tlscacerts/tls-localhost-8056.pem
               - CORE_PEER_ID=peer2.org3.anzjointlab.com
               - CORE_PEER_ADDRESS=peer2.org3.anzjointlab.com:7051
               - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer2.org3.anzjointlab.com:7051
@@ -388,8 +391,8 @@
           command: peer node start
           volumes:
               - /var/run/:/host/var/run/
-              - ./crypto-config/peerOrganizations/org3.anzjointlab.com/peers/peer2.org3.anzjointlab.com/msp:/etc/hyperledger/fabric/msp
-              - ./crypto-config/peerOrganizations/org3.anzjointlab.com/peers/peer2.org3.anzjointlab.com/tls:/etc/hyperledger/fabric/tls
+              - ./ca-files/peerOrganizations/org3.anzjointlab.com/peers/peer2.org3.anzjointlab.com/msp:/etc/hyperledger/fabric/msp
+              - ./ca-files/peerOrganizations/org3.anzjointlab.com/peers/peer2.org3.anzjointlab.com/tls:/etc/hyperledger/fabric/tls
               - peer2.org3.anzjointlab.com:/var/hyperledger/production
           ports:
               - 57051:7051
@@ -420,7 +423,7 @@
           volumes:
             - /var/run/:/host/var/run/
             - ./chaincode/:/opt/gopath/src/github.com/chaincode # 链码路径注入
-            - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+            - ./ca-files:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
             - ./scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
             - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
           depends_on:

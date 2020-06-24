@@ -4,6 +4,8 @@ OrdererOrgs:
           Specs:
                   - Hostname: orderer
                     CommonName: orderer.anzjointlab.com
+          CA: 
+                OrganizationUnit: admin
 PeerOrgs:
         - Name: bc_org1
           Domain: org1.anzjointlab.com

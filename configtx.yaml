@@ -3,24 +3,23 @@ Organizations:
         - &OrdererOrg
                 Name: OrdererOrg
                 ID: OrdererMSP
-                MSPDir: /var/anzjointlab/crypto-config/ordererOrganizations/msp
+                MSPDir: /var/anzjointlab/ca-files/ordererOrganizations/msp
 
                 Policies:
                         Readers:
                                 Type: Signature
-                                Rule: "OR('Org1MSP.admin', 'Org1MSP.peer', 'Org1MSP.client')"
+                                Rule: "OR('OrdererMSP.member')"
                         Writers:
                                 Type: Signature
-                                Rule: "OR('Org1MSP.admin', 'Org1MSP.client')"
+                                Rule: "OR('OrdererMSP.member')"
                         Admins:
                                 Type: Signature
-                                Rule: "OR('Org1MSP.admin')"
-
+                                Rule: "OR('OrdererMSP.admin')"
 
         - &org1
                 Name: Org1MSP
                 ID: Org1MSP
-                MSPDir: /var/anzjointlab/crypto-config/peerOrganizations/org1.anzjointlab.com/msp
+                MSPDir: /var/anzjointlab/ca-files/peerOrganizations/org1.anzjointlab.com/msp
                 
                 Policies:
                         Readers:
@@ -35,11 +34,11 @@ Organizations:
 
                 AnchorPeers:
                         - Host: peer0.org1.anzjointlab.com
-                          Port: 7051
+                          Port: 7055
         - &org2
                 Name: Org2MSP
                 ID: Org2MSP
-                MSPDir: /var/anzjointlab/crypto-config/peerOrganizations/org2.anzjointlab.com/msp
+                MSPDir: /var/anzjointlab/ca-files/peerOrganizations/org2.anzjointlab.com/msp
 
 
                 Policies:
@@ -56,11 +55,11 @@ Organizations:
                 
                 AnchorPeers:
                         - Host: peer0.org2.anzjointlab.com
-                          Port: 7051
+                          Port: 7056
         - &org3
                 Name: Org3MSP
                 ID: Org3MSP
-                MSPDir: /var/anzjointlab/crypto-config/peerOrganizations/org3.anzjointlab.com/msp
+                MSPDir: /var/anzjointlab/ca-files/peerOrganizations/org3.anzjointlab.com/msp
 
 
 
@@ -78,7 +77,7 @@ Organizations:
 
                 AnchorPeers:
                         - Host: peer0.org3.anzjointlab.com
-                          Port: 7051
+                          Port: 7057
 
 
 
@@ -115,7 +114,7 @@ Application: &ApplicationDefaults
 Orderer: &OrdererDefaults
         OrdererType: solo
         Addresses:
-           - orderer.anzjointlab.com:7050
+           - orderer.anzjointlab.com:8055
         BatchSize:
                 MaxMessageCount: 10
                 AbsoluteMaxBytes: 99 MB
